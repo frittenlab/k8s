@@ -10,7 +10,6 @@
    containerTemplate(name: 'docker', image: '17.09.1-ce-git', command: 'cat', ttyEnabled: true),
    containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.9.2', command: 'cat', ttyEnabled: true)
  ],
- 
  volumes:[
    hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
  ])
