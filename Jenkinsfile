@@ -1,9 +1,4 @@
- node {
-
-   def project = 'spearce'
-   def appName = 'k8s-app'
-   def imageTag = "docker.io/${project}/${appName}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
-
+#!/usr/bin/groovy
 
  podTemplate(label: 'jenkins-pipeline', containers: [
    containerTemplate(name: 'jnlp', image: 'jenkinsci/jnlp-slave:3.16-1-alpine', args: '${computer.jnlpmac} ${computer.name}', workingDir: '/home/jenkins', resourceRequestCpu: '200m', resourceLimitCpu: '300m', resourceRequestMemory: '256Mi', resourceLimitMemory: '512Mi'),
@@ -13,6 +8,12 @@
  volumes:[
    hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
  ])
+
+ node {
+
+   def project = 'spearce'
+   def appName = 'k8s-app'
+   def imageTag = "docker.io/${project}/${appName}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
 
  checkout scm
 
