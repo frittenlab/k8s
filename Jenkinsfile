@@ -9,7 +9,7 @@ volumes:[
     hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
 ])
 
- node {
+ node ('jenkins-pipeline') {
 
    def project = 'spearce'
    def appName = 'k8s-app'
