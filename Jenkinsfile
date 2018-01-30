@@ -18,7 +18,7 @@
  checkout scm
 
  stage 'Build image'
- node('docker') {
+ node('jenkins-pipeline') {
  sh("docker build -t ${imageTag} .")
  }
 }
