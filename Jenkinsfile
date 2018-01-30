@@ -7,7 +7,7 @@ podTemplate(label: 'jenkins-pipeline', containers: [
 ],
 volumes:[
     hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
-])
+]){
 
  node ('jenkins-pipeline') {
 
@@ -21,4 +21,5 @@ volumes:[
  container('docker') { 
  sh("docker build -t ${imageTag} .")
  }
+}
 }
