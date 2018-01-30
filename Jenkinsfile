@@ -18,5 +18,7 @@ volumes:[
  checkout scm
 
  stage 'Build image'
-  sh("docker build -t ${imageTag} .")
+ container('docker') { 
+ sh("docker build -t ${imageTag} .")
  }
+}
