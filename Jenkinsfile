@@ -18,7 +18,5 @@ volumes:[
  checkout scm
 
  stage 'Build image'
- node('jenkins-pipeline') {
- sh("docker build -t ${imageTag} .")
+  sh("docker build -t ${imageTag} .")
  }
-}
