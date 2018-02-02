@@ -26,6 +26,5 @@ volumes:[
    container('kubectl') 
    sh("kubectl get nodes")
  }
-
 }
 }
