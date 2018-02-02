@@ -29,5 +29,19 @@ volumes:[
  }
 }
 
-}
+ stage('do some Docker work') {
+   container('docker') {
+
+                withCredentials([[$class: 'UsernamePasswordMultiBinding', 
+                        credentialsId: 'docker_creds',
+                        usernameVariable: 'DOCKER_HUB_USER', 
+                        passwordVariable: 'DOCKER_HUB_PASSWORD']]) {
+                    
+                    sh "docker login -u ${env.DOCKER_HUB_USER} -p ${env.DOCKER_HUB_PASSWORD} "
+                    sh "docker push ${imageTag} "
+                }
+            }
+        }
+
+  }
 }
