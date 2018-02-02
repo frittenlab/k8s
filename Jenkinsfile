@@ -23,11 +23,8 @@ volumes:[
  }
  
  stage ('Run tests') {
-   container('docker') 
- }
-
- stage ('Push Image to Registry') {
-   container('docker') 
+   container('kubectl') 
+   sh("kubectl get nodes")
  }
 
 }
