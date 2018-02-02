@@ -18,13 +18,16 @@ volumes:[
  checkout scm
 
  stage ('Build image') {
-   container('docker') 
+   container('docker') { 
    sh("docker build -t ${imageTag} .")
  }
+}
  
  stage ('Run tests') {
-   container('kubectl') 
+   container('kubectl') { 
    sh("kubectl get nodes")
  }
+}
+
 }
 }
