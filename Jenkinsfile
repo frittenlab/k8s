@@ -44,6 +44,7 @@ volumes:[
         }
 
  stage "Deploy Application"
+  container('kubectl') { 
   switch (env.BRANCH_NAME) {
     // Roll out to production
     case "master":
@@ -55,6 +56,7 @@ volumes:[
         break
 
     // Roll out a dev environment
+    container('kubectl') { 
     default:
         // Create namespace if it doesn't exist
         sh("kubectl get ns ${env.BRANCH_NAME} || kubectl create ns ${env.BRANCH_NAME}")
@@ -67,4 +69,6 @@ volumes:[
         echo "Then access your service via http://localhost:8001/api/v1/proxy/namespaces/${env.BRANCH_NAME}/services/${feSvcName}:80/"
     }
   }
+}
+}
 }
