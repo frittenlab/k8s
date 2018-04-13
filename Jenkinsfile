@@ -21,9 +21,7 @@ volumes:[
  stage ('Build image') {
    container('docker') { 
    sh("docker build -t ${imageTag} .")
-   }
- }
- 
+
  stage ('Run tests') {
    container('kubectl') { 
    sh("kubectl get nodes")
