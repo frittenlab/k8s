@@ -48,7 +48,7 @@ volumes:[
   container('kubectl') { 
   switch (env.BRANCH_NAME) {
     // Roll out to production
-    case "master":
+    case "production":
         // Create namespace if it doesn't exist
         sh("kubectl get ns ${env.BRANCH_NAME} || kubectl create ns ${env.BRANCH_NAME}")
         // Change deployed image to the one we just built
