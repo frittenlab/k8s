@@ -18,11 +18,11 @@ volumes:[
 
  checkout scm
 
- stage('Build image') {
+ stage ('Build image') {
    container('docker') { 
    sh("docker build -t ${imageTag} .")
 
- stage('Run tests') {
+ stage ('Run tests') {
    container('kubectl') { 
    sh("kubectl get nodes")
    }
@@ -42,7 +42,7 @@ volumes:[
             }
         }
 
- stage 'Deploy Application'
+ stage "Deploy Application"
   container('kubectl') { 
   switch (env.BRANCH_NAME) {
     // Roll out to production
@@ -65,7 +65,7 @@ volumes:[
         sh("kubectl --namespace=${env.BRANCH_NAME} apply -f k8s/dev/")
         echo 'To access your environment run `kubectl proxy`'
         echo "Then access your service via http://localhost:8001/api/v1/proxy/namespaces/${env.BRANCH_NAME}/services/${feSvcName}:80/"
-      }
+       }
     }
   }
 }
