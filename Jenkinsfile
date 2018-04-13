@@ -14,6 +14,7 @@ volumes:[
    def project = 'spearce'
    def appName = 'k8s-app'
    def imageTag = "docker.io/${project}/${appName}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
+   def feSvcName = "apache-svc"
 
  checkout scm
 
