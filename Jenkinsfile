@@ -65,29 +65,7 @@ volumes:[
         sh("kubectl --namespace=${env.BRANCH_NAME} apply -f k8s/dev/")
         echo 'To access your environment run `kubectl proxy`'
         echo "Then access your service via http://localhost:8001/api/v1/proxy/namespaces/${env.BRANCH_NAME}/services/${feSvcName}:80/"
+       }
     }
-  }
-}
- 
- stage ('Run tests') {
-   container('kubectl') { 
-   sh("kubectl get nodes")
- }
-}
-
- stage('do some Docker work') {
-   container('docker') {
-
-                withCredentials([[$class: 'UsernamePasswordMultiBinding', 
-                        credentialsId: 'docker_creds',
-                        usernameVariable: 'DOCKER_HUB_USER', 
-                        passwordVariable: 'DOCKER_HUB_PASSWORD']]) {
-                    
-                    sh "docker login -u ${env.DOCKER_HUB_USER} -p ${env.DOCKER_HUB_PASSWORD} "
-                    sh "docker push ${imageTag} "
-                }
-            }
-        }
-
   }
 }
