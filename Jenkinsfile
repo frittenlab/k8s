@@ -42,7 +42,7 @@ volumes:[
             }
         }
 
- stage('Deploy Application') {
+ stage 'Deploy Application'
   container('kubectl') { 
   switch (env.BRANCH_NAME) {
     // Roll out to production
@@ -69,4 +69,3 @@ volumes:[
       }
     }
   }
-}
