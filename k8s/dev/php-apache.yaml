@@ -5,7 +5,6 @@ metadata:
   labels:
     app: apache
   name: apache 
-  namespace: default
 spec:
   replicas: 1 
   selector:
