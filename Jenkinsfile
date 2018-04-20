@@ -49,7 +49,7 @@ volumes:[
 
  stage "Deploy Application"
   container('kubectl') { 
-  switch (${MASTER_BRANCH_NAME}) {
+  switch ${MASTER_BRANCH_NAME} {
     // Roll out to production
     case "master":
         // Create namespace if it doesn't exist
