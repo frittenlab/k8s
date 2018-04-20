@@ -15,6 +15,7 @@ volumes:[
    def appName = 'k8s-app'
    def imageTag = "docker.io/${project}/${appName}:${env.BRANCH_NAME}.${env.BUILD_NUMBER}"
    def feSvcName = "apache-svc"
+   def MASTER_BRANCH_NAME = "prod"
 
  checkout scm
 
@@ -44,13 +45,15 @@ volumes:[
             }
         }
 
+
+
  stage "Deploy Application"
   container('kubectl') { 
-  switch (env.BRANCH_NAME) {
+  switch (${MASTER_BRANCH_NAME}) {
     // Roll out to production
-    case "production":
+    case "master":
         // Create namespace if it doesn't exist
-        sh("kubectl get ns ${env.BRANCH_NAME} || kubectl create ns ${env.BRANCH_NAME}")
+        sh("kubectl get ns ${MASTER_BRANCH_NAME} || kubectl create ns ${MASTER_BRANCH_NAME}")
         // Change deployed image to the one we just built
         sh("sed -i.bak 's#gceme:1.0.0#${imageTag}#' ./k8s/production/*.yaml")
         sh("kubectl --namespace=production apply -f k8s/services/")
