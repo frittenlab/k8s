@@ -45,13 +45,13 @@ volumes:[
             }
         }
 
- stage "Deploy Application"
+ stage "Deploy Application" 
   container('kubectl') { 
   switch (env.BRANCH_NAME) {
     // Roll out to production
     case "master":
         // Create namespace if it doesn't exist
-        sh("kubectl get ns ${MASTER.BRANCH_NAME} || kubectl create ns ${MASTER.BRANCH_NAME}")
+        sh("kubectl get ns ${MASTER_BRANCH_NAME} || kubectl create ns ${MASTER_BRANCH_NAME}")
         // Change deployed image to the one we just built
         sh("sed -i.bak 's#gceme:1.0.0#${imageTag}#' ./k8s/production/*.yaml")
         sh("kubectl --namespace=production apply -f k8s/services/")
