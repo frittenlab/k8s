@@ -1,16 +1,5 @@
 #!/usr/bin/groovy
 
-podTemplate(label: 'jenkins-pipeline', containers: [
-    containerTemplate(name: 'jnlp', image: 'jenkinsci/jnlp-slave:3.19-1-alpine', args: '${computer.jnlpmac} ${computer.name}', workingDir: '/home/jenkins', resourceRequestCpu: '200m', resourceLimitCpu: '300m', resourceRequestMemory: '256Mi', resourceLimitMemory: '512Mi'),
-    containerTemplate(name: 'docker', image: 'docker:17.12', command: 'cat', ttyEnabled: true),
-    containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.10.0', command: 'cat', ttyEnabled: true)
-],
-volumes:[
-    hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
-]){
-
- node ('jenkins-pipeline') {
-
 /*
     Run a curl against a given url
  */
@@ -30,34 +19,16 @@ def curlRun (url, out) {
     }
 }
 
-/*
-    Test with a simple curl and check we get 200 back
- */
-def curlTest (namespace, out) {
-    echo "Running tests in ${namespace}"
+podTemplate(label: 'jenkins-pipeline', containers: [
+    containerTemplate(name: 'jnlp', image: 'jenkinsci/jnlp-slave:3.19-1-alpine', args: '${computer.jnlpmac} ${computer.name}', workingDir: '/home/jenkins', resourceRequestCpu: '200m', resourceLimitCpu: '300m', resourceRequestMemory: '256Mi', resourceLimitMemory: '512Mi'),
+    containerTemplate(name: 'docker', image: 'docker:17.12', command: 'cat', ttyEnabled: true),
+    containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.10.0', command: 'cat', ttyEnabled: true)
+],
+volumes:[
+    hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
+]){
 
-    script {
-        if (out.equals('')) {
-            out = 'http_code'
-        }
-
-        // Get deployment's service IP
-        def svc_ip = sh (
-                returnStdout: true,
-                script: "kubectl get svc -n ${namespace} | grep ${ID} | awk '{print \$3}'"
-        )
-
-        if (svc_ip.equals('')) {
-            echo "ERROR: Getting service IP failed"
-            sh 'exit 1'
-        }
-
-        echo "svc_ip is ${svc_ip}"
-        url = 'http://' + svc_ip
-
-        curlRun (url, out)
-    }
-}
+ node ('jenkins-pipeline') {
 
    def project = 'spearce'
    def appName = 'k8s-app'
