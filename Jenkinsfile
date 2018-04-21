@@ -19,6 +19,35 @@ def curlRun (url, out) {
     }
 }
 
+/*
+    Test with a simple curl and check we get 200 back
+ */
+def curlTest (namespace, out) {
+    echo "Running tests in ${namespace}"
+
+    script {
+        if (out.equals('')) {
+            out = 'http_code'
+        }
+
+        // Get deployment's service IP
+        def svc_ip = sh (
+                returnStdout: true,
+                script: "kubectl get svc -n ${namespace} | grep ${ID} | awk '{print \$3}'"
+        )
+
+        if (svc_ip.equals('')) {
+            echo "ERROR: Getting service IP failed"
+            sh 'exit 1'
+        }
+
+        echo "svc_ip is ${svc_ip}"
+        url = 'http://' + svc_ip
+
+        curlRun (url, out)
+    }
+}
+
 podTemplate(label: 'jenkins-pipeline', containers: [
     containerTemplate(name: 'jnlp', image: 'jenkinsci/jnlp-slave:3.19-1-alpine', args: '${computer.jnlpmac} ${computer.name}', workingDir: '/home/jenkins', resourceRequestCpu: '200m', resourceLimitCpu: '300m', resourceRequestMemory: '256Mi', resourceLimitMemory: '512Mi'),
     containerTemplate(name: 'docker', image: 'docker:17.12', command: 'cat', ttyEnabled: true),
@@ -91,5 +120,33 @@ volumes:[
         echo "Then access your service via http://localhost:8001/api/v1/proxy/namespaces/${env.BRANCH_NAME}/services/${feSvcName}:80/"
        }
     }
-  }
+  
+
+// Run the 3 tests on the deployed Kubernetes pod and service
+        stage('Production tests') {
+            when {
+                expression { DEPLOY_PROD == true }
+            }
+
+            parallel {
+                stage('Curl http_code') {
+                    steps {
+                        curlTest (namespace, 'http_code')
+                    }
+                }
+                stage('Curl total_time') {
+                    steps {
+                        curlTest (namespace, 'time_total')
+                    }
+                }
+                stage('Curl size_download') {
+                    steps {
+                        curlTest (namespace, 'size_download')
+                    }
+                }
+
+
+}
+}
+}
 }
