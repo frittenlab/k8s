@@ -9,6 +9,8 @@ volumes:[
     hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
 ]){
 
+ node ('jenkins-pipeline') {
+
 /*
     Run a curl against a given url
  */
@@ -56,8 +58,6 @@ def curlTest (namespace, out) {
         curlRun (url, out)
     }
 }
-
- node ('jenkins-pipeline') {
 
    def project = 'spearce'
    def appName = 'k8s-app'
