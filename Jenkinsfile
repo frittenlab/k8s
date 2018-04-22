@@ -1,53 +1,5 @@
 #!/usr/bin/groovy
 
-/*
-    Run a curl against a given url
- */
-def curlRun (url, out) {
-    echo "Running curl on ${url}"
-
-    script {
-        if (out.equals('')) {
-            out = 'http_code'
-        }
-        echo "Getting ${out}"
-            def result = sh (
-                returnStdout: true,
-                script: "curl --output /dev/null --silent --connect-timeout 5 --max-time 5 --retry 5 --retry-delay 5 --retry-max-time 30 --write-out \"%{${out}}\" ${url}"
-        )
-        echo "Result (${out}): ${result}"
-    }
-}
-
-/*
-    Test with a simple curl and check we get 200 back
- */
-def curlTest (namespace, out) {
-    echo "Running tests in ${env.BRANCH_NAME}"
-
-    script {
-        if (out.equals('')) {
-            out = 'http_code'
-        }
-
-        // Get deployment's service IP
-        def svc_ip = sh (
-                returnStdout: true,
-                script: "kubectl get svc -n ${env.BRANCH_NAME} | grep ${feSvcName} | awk '{print \$3}'"
-        )
-
-        if (svc_ip.equals('')) {
-            echo "ERROR: Getting service IP failed"
-            sh 'exit 1'
-        }
-
-        echo "svc_ip is ${svc_ip}"
-        url = 'http://' + svc_ip
-
-        curlRun (url, out)
-    }
-}
-
 podTemplate(label: 'jenkins-pipeline', containers: [
     containerTemplate(name: 'jnlp', image: 'jenkinsci/jnlp-slave:3.19-1-alpine', args: '${computer.jnlpmac} ${computer.name}', workingDir: '/home/jenkins', resourceRequestCpu: '200m', resourceLimitCpu: '300m', resourceRequestMemory: '256Mi', resourceLimitMemory: '512Mi'),
     containerTemplate(name: 'docker', image: 'docker:17.12', command: 'cat', ttyEnabled: true),
@@ -121,33 +73,13 @@ volumes:[
        }
     }
   
-
-// Run the 3 tests on the deployed Kubernetes pod and service
-        stage('Production tests') {
-          container('jnlp') {
-//            when {
-//               expression { DEPLOY_PROD == true }
-            }
-
-            parallel {
-                stage('Curl http_code') {
-                    steps {
-                        curlTest (namespace, 'http_code')
-                    }
-                }
-                stage('Curl total_time') {
-                    steps {
-                        curlTest (namespace, 'time_total')
-                    }
-                }
-                stage('Curl size_download') {
-                    steps {
-                        curlTest (namespace, 'size_download')
-                    }
-                }
+ stage ('Run tests') {
+   container('kubectl') { 
+   sh("kubectl get svc -n ${env.BRANCH_NAME} | grep ${feSvcName} | awk '{print \$3}'")
+   }
+ }
 
 
-}
 }
 }
 }
