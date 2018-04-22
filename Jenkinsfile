@@ -78,9 +78,10 @@ volumes:[
        sh("kubectl get svc -n ${env.BRANCH_NAME} | grep ${feSvcName} | awk '{print \$3}'")
        def foo = ("date")
        sh("echo ${foo}")
+     container('jnlp') {
        sh("curl http://${feSvcName}/${env.BRANCH_NAME}") 
        }
    }
-
+}
 }
 }
