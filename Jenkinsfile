@@ -124,9 +124,9 @@ volumes:[
 
 // Run the 3 tests on the deployed Kubernetes pod and service
         stage('Production tests') {
-            #when {
-            #    expression { DEPLOY_PROD == true }
-            #}
+//            when {
+//               expression { DEPLOY_PROD == true }
+            }
 
             parallel {
                 stage('Curl http_code') {
