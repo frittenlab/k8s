@@ -75,6 +75,11 @@ volumes:[
   
  stage ('Run tests') {
    container('kubectl') { 
+   steps {
+     script {
+       env.FILENAME =  sh("kubectl get svc -n ${env.BRANCH_NAME} | grep ${feSvcName} | awk '{print \$3}'")
+       }
+       echo "${env.FILENAME}"   
    sh("kubectl get svc -n ${env.BRANCH_NAME} | grep ${feSvcName} | awk '{print \$3}'")
    def foo = "(kubectl get svc -n ${env.BRANCH_NAME} | grep ${feSvcName} | awk '{print \$3}')"
    sh "echo ${foo}"
