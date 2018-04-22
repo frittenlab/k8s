@@ -76,9 +76,9 @@ volumes:[
    stage ('Run tests') {
      container('kubectl') { 
        sh("kubectl get svc -n ${env.BRANCH_NAME} | grep ${feSvcName} | awk '{print \$3}'")
-       def foo = "(kubectl get svc -n ${env.BRANCH_NAME} | grep ${feSvcName} | awk '{print \$3}')"
-       sh "echo ${foo}"
-       sh "curl http://${feSvcName}/${env.BRANCH_NAME}" 
+       def foo = ("date")
+       sh("echo ${foo}")
+       sh("curl http://${feSvcName}/${env.BRANCH_NAME}") 
        }
    }
 
