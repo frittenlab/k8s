@@ -124,6 +124,7 @@ volumes:[
 
 // Run the 3 tests on the deployed Kubernetes pod and service
         stage('Production tests') {
+          container('jnlp') {
 //            when {
 //               expression { DEPLOY_PROD == true }
             }
@@ -146,6 +147,7 @@ volumes:[
                 }
 
 
+}
 }
 }
 }
