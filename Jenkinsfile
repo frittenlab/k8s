@@ -23,7 +23,7 @@ def curlRun (url, out) {
     Test with a simple curl and check we get 200 back
  */
 def curlTest (namespace, out) {
-    echo "Running tests in ${namespace}"
+    echo "Running tests in ${env.BRANCH_NAME}"
 
     script {
         if (out.equals('')) {
@@ -33,7 +33,7 @@ def curlTest (namespace, out) {
         // Get deployment's service IP
         def svc_ip = sh (
                 returnStdout: true,
-                script: "kubectl get svc -n ${namespace} | grep ${ID} | awk '{print \$3}'"
+                script: "kubectl get svc -n ${env.BRANCH_NAME} | grep ${feSvcName} | awk '{print \$3}'"
         )
 
         if (svc_ip.equals('')) {
@@ -99,12 +99,12 @@ volumes:[
     // Roll out to production
     case "master":
         // Create namespace if it doesn't exist
-        sh("kubectl get ns ${MASTER_BRANCH_NAME} || kubectl create ns ${MASTER_BRANCH_NAME}")
+        sh("kubectl get ns ${env.BRANCH_NAME} || kubectl create ns ${env.BRANCH_NAME}")
         // Change deployed image to the one we just built
         sh("sed -i.bak 's#gceme:1.0.0#${imageTag}#' ./k8s/production/*.yaml")
-        sh("kubectl --namespace=${MASTER_BRANCH_NAME} apply -f k8s/services/")
-        sh("kubectl --namespace=${MASTER_BRANCH_NAME} apply -f k8s/production/")
-        sh("echo http://`kubectl --namespace=${MASTER_BRANCH_NAME} get service/${feSvcName} --output=json | jq -r '.status.loadBalancer.ingress[0].ip'` > ${feSvcName}")
+        sh("kubectl --namespace=${env.BRANCH_NAME} apply -f k8s/services/")
+        sh("kubectl --namespace=${env.BRANCH_NAME} apply -f k8s/production/")
+        sh("echo http://`kubectl --namespace=${env._BRANCH_NAME} get service/${feSvcName} --output=json | jq -r '.status.loadBalancer.ingress[0].ip'` > ${feSvcName}")
         break
 
     // Roll out a dev environment
@@ -124,9 +124,9 @@ volumes:[
 
 // Run the 3 tests on the deployed Kubernetes pod and service
         stage('Production tests') {
-            when {
-                expression { DEPLOY_PROD == true }
-            }
+            #when {
+            #    expression { DEPLOY_PROD == true }
+            #}
 
             parallel {
                 stage('Curl http_code') {
