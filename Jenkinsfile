@@ -80,7 +80,7 @@ volumes:[
        def foo = ("date")
        sh("echo ${foo}")
      container('curl') {
-       sh("curl http://${feSvcName}/${env.BRANCH_NAME}") 
+       sh("curl http://${feSvcName}.${env.BRANCH_NAME}") 
        }
    }
 }
