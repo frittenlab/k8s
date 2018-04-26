@@ -46,7 +46,7 @@ volumes:[
             }
         }
 
- stage "Deploy Application" 
+ stage "Deploy Application" { 
   container('kubectl') { 
   switch (env.BRANCH_NAME) {
     // Roll out to production
@@ -73,7 +73,7 @@ volumes:[
         echo "Then access your service via http://localhost:8001/api/v1/namespaces/${env.BRANCH_NAME}/services/${feSvcName}/proxy"
        }
     }
-
+}
    stage ('Run tests') {
      container('kubectl') { 
        sh("kubectl get svc -n ${env.BRANCH_NAME} | grep ${feSvcName} | awk '{print \$3}'")
