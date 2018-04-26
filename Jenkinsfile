@@ -4,7 +4,7 @@ podTemplate(label: 'jenkins-pipeline', containers: [
     containerTemplate(name: 'jnlp', image: 'jenkinsci/jnlp-slave:3.19-1-alpine', args: '${computer.jnlpmac} ${computer.name}', workingDir: '/home/jenkins', resourceRequestCpu: '200m', resourceLimitCpu: '300m', resourceRequestMemory: '256Mi', resourceLimitMemory: '512Mi'),
     containerTemplate(name: 'docker', image: 'docker:17.12', command: 'cat', ttyEnabled: true),
     containerTemplate(name: 'kubectl', image: 'lachlanevenson/k8s-kubectl:v1.10.1', command: 'cat', ttyEnabled: true),
-    containerTemplate(name: 'curl-jq', image: 'cfmanteiga/alpine-bash-curl-jq:latest', command: 'cat', ttyEnabled: true)
+    containerTemplate(name: 'curljq', image: 'cfmanteiga/alpine-bash-curl-jq:latest', command: 'cat', ttyEnabled: true)
 ],
 volumes:[
     hostPathVolume(mountPath: '/var/run/docker.sock', hostPath: '/var/run/docker.sock'),
@@ -79,7 +79,7 @@ volumes:[
        sh("kubectl get svc -n ${env.BRANCH_NAME} | grep ${feSvcName} | awk '{print \$3}'")
        def foo = ("date")
        sh("echo ${foo}")
-     container('curl-jq') {
+     container('curljq') {
        sh("curl -I http://${feSvcName}.${env.BRANCH_NAME}") 
      }
    }
