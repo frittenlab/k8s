@@ -57,7 +57,6 @@ volumes:[
         sh("sed -i.bak 's#gceme:1.0.0#${imageTag}#' ./k8s/production/*.yaml")
         sh("kubectl --namespace=${env.BRANCH_NAME} apply -f k8s/services/")
         sh("kubectl --namespace=${env.BRANCH_NAME} apply -f k8s/production/")
-  container('curl') {
         sh("echo http://`kubectl --namespace=${env.BRANCH_NAME} get service/${feSvcName} --output=json | jq -r '.status.loadBalancer.ingress[0].ip'` > ${feSvcName}")
         break
 
@@ -73,9 +72,8 @@ volumes:[
         echo 'To access your environment run `kubectl proxy`'
         echo "Then access your service via http://localhost:8001/api/v1/namespaces/${env.BRANCH_NAME}/services/${feSvcName}/proxy"
        }
-    }
-  }
-}
+     }
+   }
 
    stage ('Run tests') {
      container('kubectl') { 
